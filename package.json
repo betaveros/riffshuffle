@@ -21,9 +21,9 @@
     "babel-loader": "^8.0.6",
     "prettier": "^1.18.2",
     "typescript": "^3.6.4",
-    "webpack": "^4.41.2",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.9.0"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
     "@tonaljs/chord": "^3.2.3",
