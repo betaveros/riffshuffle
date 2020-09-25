@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>RiffShuffle</title>
+		<meta charset='utf-8'>
+		<style>
+.error {
+	background-color: #fee;
+	font-size: 150%;
+	color: #c00;
+}
+.key-signature {
+	display: inline-block;
+	width: 2em;
+	text-align: center;
+}
+.parameter-bar {
+	display: flex;
+	align-items: stretch;
+	flex-wrap: wrap;
+}
+.play-bar {
+	display: flex;
+	align-items: stretch;
+}
+.debug {
+	position: fixed;
+	right: 0;
+	bottom: 0;
+	padding: 0 0.5em;
+	opacity: 0.5;
+	min-width: 6em;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+.music-time {
+	padding: 0 0.5em;
+	min-width: 6em;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+}
+.music-display-outer {
+	overflow-x: scroll;
+}
+.music-display-outer.loading {
+	background-color: #f8f8f8;
+}
+.music-display {
+	position: relative;
+	background-color: #eee;
+}
+.music-display-outer.loading .music-display {
+	background-color: #e8e8e8;
+}
+.music-display .loading-text {
+	position: absolute;
+	top: 0.5em;
+	left: 0.5em;
+	font-size: 250%;
+	opacity: 50%;
+}
+.music-display .note {
+	position: absolute;
+	background-color: black;
+	color: white;
+	text-align: center;
+	font-family: sans-serif;
+	overflow: hidden;
+	font-size: 11pt;
+}
+.music-display .note.hovered {
+	background-color: #00c;
+}
+.music-display .chord-barline {
+	position: absolute;
+	/* background-color: gray; */
+	height: 100%;
+	border-left: 1px solid gray;
+}
+.music-display .chord-note {
+	position: absolute;
+	background-color: gray;
+}
+.now-bar {
+	position: absolute;
+	background-color: #f00;
+	opacity: 0.5;
+	top: 0;
+	width: 5px;
+	height: 100%;
+}
+.hovered-split {
+	position: absolute;
+	width: 0;
+	top: 0;
+	height: 100%;
+	border-left: 1px dashed #00f;
+}
+.chords-display, .change-display {
+	display: flex;
+}
+.chord-dropdown {
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	border-top: 1px solid black;
+	border-left: 1px solid black;
+	text-align: center;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+.start-change {
+	box-sizing: border-box;
+	flex: none;
+	border-bottom: 1px solid black;
+	border-left: 1px solid black;
+}
+.start-change .btn {
+	min-width: 0;
+	width: 100%;
+}
+/* left borders are the pixel perfect one */
+.chord-dropdown:last-child, .start-change:last-child {
+	border-right: 1px solid black;
+}
+.random-controls {
+	display: flex;
+	align-items: center;
+}
+.is-changing {
+	background-color: #ff9;
+	border-bottom-width: 0;
+}
+.chord-change-wrap {
+	width: 100%;
+}
+.chord-change {
+	background-color: #ff9;
+}
+.chord-change tr:hover {
+	background-color: #ffc;
+}
+.chord-change button {
+	border-radius: 3px;
+	border: 1px solid #ee6;
+	background-color: #ff9;
+}
+.chord-change tr:hover button { background-color: #ffc; cursor: pointer; }
+.chord-change button:active { background-color: #ff9; }
+.chord-change button[disabled], .chord-change tr:hover button[disabled] { background-color: #ee8; cursor: auto; }
+.change-score {
+	font-feature-settings: tnum;
+	font-size: 80%; text-align: right;
+}
+.change-locked {
+	font-size: 80%;
+}
+.score, .locked, .unlocked {
+	font-size: 80%;
+}
+.locked { font-weight: bold; }
+.unlocked { opacity: 30%; }
+.sections { display: flex; flex-direction: root; }
+.sections div:first-child, .sections div:last-child { flex: 1; }
+.sections button { flex: 2; min-width: 0; padding-left: 0; padding-right: 0; }
+.ui-parameter {
+	width: 4em;
+}
+
+.box {
+	border: 1px solid gray;
+	border-radius: 4px;
+	margin: 0.2em;
+	padding: 0.2em;
+	display: flex;
+	align-items: center;
+}
+.box.vertical-box {
+	justify-content: center;
+	flex-direction: column;
+}
+.range-label {
+	display: inline-flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+.range-label > :last-child {
+	font-size: 80%;
+}
+.chord-reset {
+	display: flex;
+}
+
+.zoom {
+	display: inline-block;
+	width: 4em;
+	text-align: center;
+}
+.bottom-bass {
+	display: inline-block;
+	width: 7em;
+	text-align: center;
+}
+.btn {
+	display: inline-block;
+	min-width: 2.5em;
+	padding: 2px 6px;
+	background-color: #eee;
+	border-color: #aaa;
+	border-radius: 4px;
+	cursor: pointer;
+	background-image: linear-gradient(to bottom,#fff 0,#eee 100%);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
+	border: 1px solid #ccc;
+	white-space: nowrap;
+}
+.btn:hover {
+	background-color: #e6e6e6;
+	background-image: linear-gradient(to bottom,#fff 0,#ddd 100%);
+	border-color: #888;
+}
+.btn:active {
+	color: #333;
+	border-color: #888;
+	background-image: none;
+	background-color: #ddd;
+}
+.btn[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+	border-color: #666;
+	color: #333;
+	background-image: none;
+	background-color: #ddd;
+}
+.btn.green {
+	background-color: #eefcee;
+	border-color: #aba;
+	border-radius: 4px;
+	cursor: pointer;
+	background-image: linear-gradient(to bottom,#efe 0,#ded 100%);
+	box-shadow: inset 0 1px 0 rgba(255,255,255,.15),0 1px 1px rgba(0,0,0,.075);
+	border: 1px solid #cdc;
+}
+.btn.green:hover {
+	background-color: #f8fff8;
+	background-image: linear-gradient(to bottom,#f8fff8 0,#e8ffe8 100%);
+	border-color: #8a8;
+}
+.btn.green:active {
+	color: #131;
+	border-color: #8a8;
+	background-image: none;
+	background-color: #dfd;
+}
+.btn.green[disabled] {
+	opacity: 0.5;
+	cursor: not-allowed;
+	border-color: #686;
+	color: #353;
+	background-image: none;
+	background-color: #dde8dd;
+}
+.fixed-full-width {
+	width: 100%;
+}
+.instrument-display {
+	display: grid;
+	grid-template-rows: auto auto;
+	grid-template-columns: auto auto auto auto;
+	grid-column-gap: 0.5em;
+	font-size: 80%;
+}
+.key-signature-box {
+	display: grid;
+	grid-column-gap: 0.5em;
+	grid-row-gap: 0.5em;
+	justify-items: center;
+	grid-template-areas:
+		"title major minor mixed-relative minorness"
+		"adjust major parallel-minor mixed-parallel minorness";
+}
+.key-signature-box .title { grid-area: title; }
+.key-signature-box .adjust { grid-area: adjust; }
+.key-signature-box .major { grid-area: major; }
+.key-signature-box .minor { grid-area: minor; }
+.key-signature-box .parallel-minor { grid-area: parallel-minor; }
+.key-signature-box .mixed-relative { grid-area: mixed-relative; }
+.key-signature-box .mixed-parallel { grid-area: mixed-parallel; }
+.key-signature-box .minorness { grid-area: minorness; }
+
+.instrument-display > div {
+	align-self: center;
+}
+.dialog {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	padding: 2em;
+	background-color: rgba(0, 0, 0, 0.5);
+}
+.save-load-dialog .dialog-inner {
+	display: flex;
+	flex-direction: column;
+}
+.save-load-dialog .dialog-inner textarea {
+	flex: 1;
+}
+
+.dialog.hidden {
+	display: none;
+}
+.dialog-inner {
+	height: 100%;
+	padding: 1em;
+	background-color: #eee;
+	overflow: scroll;
+	box-sizing: border-box;
+}
+.dialog-inner table {
+	margin: auto;
+}
+.dialog-close {
+	position: fixed;
+	top: 3em;
+	right: 3em;
+}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script src="bundle.js"></script>
+	</body>
+</html>

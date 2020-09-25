@@ -1,0 +1,6 @@
+dist/bundle.js
+node_modules
+venv
+__pycache__
+*.pickle
+*.pyc
