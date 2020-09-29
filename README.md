@@ -25,4 +25,6 @@ Versions of things are very not extensively tested.
 
 ### data
 
-coming at some undetermined point in the future
+See `usertests`. We lost several harmonizations because users selected the wrong melody or uploaded the wrong file: 1-2-3, 2-1-5, 2-4-1 (test number - song number - participant number). Should probably have made the server upload them itself, oops.
+
+We also reordered the songs when presenting them to users in test 2 to get more varied data. The JSON files provided here are in the order used in test 1 and described in the thesis; in the second test, they were presented in the order song1, song4, song2, song3.
