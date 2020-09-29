@@ -1,7 +1,9 @@
 RiffShuffle
 ===========
 
-My 2020 MEng project, advised by Eran Egozy
+My 2020 MEng thesis project, advised by Eran Egozy
+
+The thesis is accessible on DSpace@MIT here: https://dspace.mit.edu/handle/1721.1/127386
 
 Don't expect the code to be too good, it was all written under time pressure
 
