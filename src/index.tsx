@@ -1423,6 +1423,9 @@ class MusicPlayer extends Component<{}, MusicPlayerState> {
 		try {
 			const { version, music, musicInstrument, chordInstrument, strumChords, musicVolume, chordVolume, defaultChordLength, chords, uiKeySignature, uiMode, uiMinorness, uiJazz, uiFirstWeight, isRandom, uiChaos, seed, bottomBass, showChords } = JSON.parse(this.state.saveLoadTextarea);
 			this.setState({ version, music, musicInstrument, chordInstrument, strumChords, musicVolume, chordVolume, defaultChordLength, chords, uiKeySignature, uiMode, uiMinorness, uiJazz, uiFirstWeight, isRandom, uiChaos, seed, bottomBass, showChords });
+
+			this.audioWrapper.loadInstrument(musicInstrument);
+			this.audioWrapper.loadInstrument(chordInstrument);
 		} catch (exc) {
 			this.setState({ saveLoadError: String(exc) });
 		}
