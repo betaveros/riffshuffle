@@ -1,4 +1,4 @@
-music21-6.1.0
-numpy-1.19.2
-typing-extensions-3.7.4.3
-websockets-8.1
+music21==6.1.0
+numpy==1.19.2
+typing-extensions==3.7.4.3
+websockets==8.1
