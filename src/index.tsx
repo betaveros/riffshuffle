@@ -848,8 +848,8 @@ class MusicPlayer extends Component<{}, MusicPlayerState> {
 				this.setState({
 					music,
 					chords: [],
-					uiKeySignature: music.keySignature === "minor" ? "relative-minor" : "major",
-					uiMode: music.mode,
+					uiKeySignature: music.keySignature,
+					uiMode: music.mode === "minor" ? "relative-minor" : "major",
 					defaultChordLength: chordLength,
 					debugInfo: JSON.stringify(music),
 				}, this.sendWS);
